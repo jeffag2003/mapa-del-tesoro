@@ -1,0 +1,3 @@
+Recursividad de cola
+
+Siempre dar como return el resultado de la funcion en el caso base
