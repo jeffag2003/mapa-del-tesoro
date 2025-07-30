@@ -1,31 +1,30 @@
 import tkinter as tk
 
 
-#crear un mapa de nxm caracteres
-#E: ruta_nombre del archivos, filas, columnas, caracter
-#S: none (crea el archivo)
+# E: ruta_nombre del archivos, filas, columnas, caracter
+# S: none (crea el archivo)
 def create_raw_map(filename, rows, col, char):
-    with open (filename, 'w') as file: 
-        line = char * col  
-        for _ in range(rows):  
-            file.write(line + '\n') 
-        
+    with open(filename, 'w', newline='\n') as file:
+        line = char * col
+        for _ in range(rows):
+            file.write(line + '\n')
 
-#lee el archivo linea a linea y retorna una matriz con cada linea
-#E: nombre del archivo
-#S: matriz
+
+
+# E: nombre del archivo
+# S: matriz
 def read_map(filename):
     matriz = []
-    with open (filename, 'r') as file: #abre el archivo
-        for line in file:   #el file es iterable, se recorre por linea
-            matriz.append(line[:-1]) #hace push en la matriz y se guarda como lista, el [:-1] quita el \n
+    with open(filename, 'r') as file:  # abre el archivo
+        for line in file:  # el file es iterable, se recorre por linea
+            matriz.append(line[:-1])  # hace push en la matriz y se guarda como lista, el [:-1] quita el \n
     return matriz
 
-#cambiar un caracter en el mapa dado un x,y
-#E: ruta_nombre del archivos, filas, columnas, caracter nuevo
-#S: none (cambia el mapa)
+
+# E: ruta_nombre del archivos, filas, columnas, caracter nuevo
+# S: none (cambia el mapa)
 def change_character(filename, row, col, new_char):
-    with open (filename, 'r+') as file:
+    with open(filename, 'r+') as file:
         file.seek(0)
         line = file.readline()
         row_length = len(line[:-1])
@@ -34,15 +33,10 @@ def change_character(filename, row, col, new_char):
         file.write(new_char)
 
 
+# E: archivo, caracter, lista coordenadas [(4,6) (6,30), (30,52), ....]
+# S: none
+# R: No se puede llegar mas largo al tamno de la fila
 
-#dibujar caminos horizontales y verticales dada una lista de puntos (tuplas,(x,y)
-#E: archivo, caracter, lista coordenadas [(4,6) (6,30), (30,52), ....]
-        #uno de los 2 valores debe ser igual
-        #si es x se va a pintar horizontalmente
-        #si es y se va a pintar verticalmente
-#R: No se puede llegar mas largo al tamno de la fila
-        #el calculo se puede hacer con linea -2
-   
 def draw_path(filename, new_char, coords_list):
     with open(filename, 'r+') as file:
         file.seek(0)
@@ -54,13 +48,13 @@ def draw_path(filename, new_char, coords_list):
             row1, col1 = coords_list[i]
             row2, col2 = coords_list[i + 1]
 
-            if row1 == row2:  
+            if row1 == row2:
                 for c in range(min(col1, col2), max(col1, col2) + 1):
                     offset = row1 * (row_length + 1) + c
                     file.seek(offset)
                     file.write(new_char)
 
-            elif col1 == col2:  
+            elif col1 == col2:
                 for r in range(min(row1, row2), max(row1, row2) + 1):
                     offset = r * (row_length + 1) + col1
                     file.seek(offset)
@@ -68,16 +62,14 @@ def draw_path(filename, new_char, coords_list):
             else:
                 return
 
-    
-
-
+#E: archivo, coordenadas
+#S: Bool
 def find_treasure(filename, start):
     mapa = read_map(filename)
     rows = len(mapa)
     col = len(mapa[0])
     passed = [[False] * col for _ in range(rows)]
     path = []
-
 
     def valid(r, c):
         if r < 0 or r >= rows or c < 0 or c >= col:
@@ -88,8 +80,8 @@ def find_treasure(filename, start):
             return False
         return True
 
-    def backtracking_solution(r,c):
-        if not valid(r,c):
+    def backtracking_solution(r, c):
+        if not valid(r, c):
             return False
 
         passed[r][c] = True
@@ -98,9 +90,9 @@ def find_treasure(filename, start):
         if mapa[r][c] == 'T':
             return True
 
-        coords = [(-1,0), (1,0), (0,-1), (0,1)]
+        coords = [(-1, 0), (1, 0), (0, -1), (0, 1)]
         for new_r, new_c in coords:
-            if backtracking_solution( r + new_r, c + new_c):
+            if backtracking_solution(r + new_r, c + new_c):
                 return True
 
         path.pop()
@@ -113,10 +105,11 @@ def find_treasure(filename, start):
         mark_path(filename, path, '*')
         return path
     else:
-        print('no se encontro')
-        return False
-        
+        print('no se encontro')       
+        return []
 
+#E: archivo, lista, str
+#S:
 def mark_path(filename, path, char='*'):
     mapa = read_map(filename)
     mapa_lista = []
@@ -133,12 +126,14 @@ def mark_path(filename, path, char='*'):
         new_filename = 'mapa_camino.txt'
         with open(new_filename, 'w') as file:
             for row in mapa_lista:
-                line = ""
+                line = ''
                 for character in row:
                     line += character
-                file.write(line + "\n")
+                file.write(line + '\n')
         print("Archivo con camino guardado en " + new_filename)
 
+#E: archivo, coordenadas, lista, bool
+#S: 
 def map_GUI(filename, start, path, treasure_found):
     mapa = read_map(filename)
     rows = len(mapa)
@@ -159,7 +154,6 @@ def map_GUI(filename, start, path, treasure_found):
             y2 = y1 + cell_size
             cell = mapa[r][c]
 
-            # Pinta el camino si está en path
             if (r, c) in path:
                 color = 'green'
             elif cell == '#':
@@ -180,15 +174,8 @@ def map_GUI(filename, start, path, treasure_found):
         with open("mapa_err.txt", "w") as error_file:
             error_file.write('Error, mapa sin solución iniciando en coordenadas ' + str(start[0]) + ',' + str(start[1]) + '\n')
 
-    canvas.create_text((col * cell_size) // 2, rows * cell_size + 20, text=mensaje, fill=color_texto, font=("Arial", 12, "bold"))
+    canvas.create_text((col * cell_size) // 2, rows * cell_size + 20, text=mensaje, fill=color_texto,font=("Arial", 12, "bold"))
 
     root.mainloop()
 
-
-
-
-
-
-
-                
-    
+   
