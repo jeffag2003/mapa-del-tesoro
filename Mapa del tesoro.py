@@ -63,7 +63,7 @@ def draw_path(filename, new_char, coords_list):
                 return
 
 #E: archivo, coordenadas
-#S: Bool
+#S: Lista
 def find_treasure(filename, start):
     mapa = read_map(filename)
     rows = len(mapa)
