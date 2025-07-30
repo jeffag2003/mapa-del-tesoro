@@ -1,2 +1,0 @@
-Si el hijo tiene 1 o mas hijos se va a representar con una lista, si el nodo en cuestion tiene un hijo izq pero no derecho
-se representa el izq en la lista y el derecho con una lista vacia
